@@ -42,38 +42,6 @@
 | 認証 | **Firebase Auth** |
 | アイコン | **Lucide React** |
 
-## セットアップ
-
-```bash
-git clone https://github.com/Davinci-Meg/flow-tank.git
-cd flow-tank
-npm install
-```
-
-### 環境変数
-
-サンプルファイルをコピーして、Firebaseの認証情報を記入:
-
-```bash
-cp .env.local.example .env.local
-```
-
-> 認証なしでも利用できます（タイマーはオフラインで動作し、データはローカルに保存されます）。
-
-### 起動
-
-```bash
-npm run dev
-```
-
-ブラウザで [http://localhost:3000](http://localhost:3000) を開いてください。
-
-## デプロイ
-
-Vercelでワンクリックデプロイ:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Davinci-Meg/flow-tank)
-
 ## ライセンス
 
 [MIT](LICENSE)

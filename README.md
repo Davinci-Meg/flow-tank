@@ -42,38 +42,6 @@ Your entire screen becomes a water tank. As your Pomodoro session progresses, wa
 | Auth | **Firebase Auth** |
 | Icons | **Lucide React** |
 
-## Getting Started
-
-```bash
-git clone https://github.com/Davinci-Meg/flow-tank.git
-cd flow-tank
-npm install
-```
-
-### Environment Variables
-
-Copy the example file and add your Firebase credentials:
-
-```bash
-cp .env.local.example .env.local
-```
-
-> You can skip this step to use the app without authentication (timer works offline with local storage).
-
-### Run
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-## Deploy
-
-One-click deploy with Vercel:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Davinci-Meg/flow-tank)
-
 ## License
 
 [MIT](LICENSE)
