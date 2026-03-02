@@ -5,19 +5,11 @@ import LandingPage from "@/components/landing/LandingPage";
 import TimerPage from "@/components/timer/TimerPage";
 
 export default function Home() {
-  const { user, initialized, loading } = useAuthStore();
+  const { user, initialized } = useAuthStore();
 
-  // 初期化中はローディング表示
-  if (!initialized || loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-blue border-t-transparent" />
-      </div>
-    );
-  }
-
-  // 未ログイン → LP、ログイン済み → タイマー
-  if (!user) {
+  // 認証初期化前 → LPを即表示（スピナーで待たせない）
+  // 初期化後にuserが確定したら、ログイン済みならタイマーに切り替わる
+  if (!initialized || !user) {
     return <LandingPage />;
   }
 
