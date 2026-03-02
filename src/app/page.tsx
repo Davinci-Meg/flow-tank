@@ -73,6 +73,7 @@ export default function Home() {
 
         <TimerControls
           status={status}
+          label={label}
           onStart={start}
           onPause={pause}
           onResume={resume}

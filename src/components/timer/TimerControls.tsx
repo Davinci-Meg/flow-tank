@@ -6,6 +6,7 @@ import { type TimerStatus } from "@/stores/timer-store";
 
 interface TimerControlsProps {
   status: TimerStatus;
+  label: string;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -15,12 +16,14 @@ interface TimerControlsProps {
 
 export default function TimerControls({
   status,
+  label,
   onStart,
   onPause,
   onResume,
   onReset,
   onSkip,
 }: TimerControlsProps) {
+  const canStart = label.trim().length > 0;
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.code !== "Space") return;
@@ -31,7 +34,7 @@ export default function TimerControls({
       e.preventDefault();
       switch (status) {
         case "idle":
-          onStart();
+          if (canStart) onStart();
           break;
         case "running":
           onPause();
@@ -66,7 +69,12 @@ export default function TimerControls({
       {status === "idle" ? (
         <button
           onClick={onStart}
-          className="flex h-16 w-16 items-center justify-center rounded-full bg-muted-blue text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg active:scale-95"
+          disabled={!canStart}
+          className={`flex h-16 w-16 items-center justify-center rounded-full shadow-md transition-all active:scale-95 ${
+            canStart
+              ? "bg-muted-blue text-white hover:opacity-90 hover:shadow-lg"
+              : "bg-beige text-warm-gray cursor-not-allowed opacity-50"
+          }`}
           aria-label="スタート"
         >
           <Play size={28} className="ml-1" />
