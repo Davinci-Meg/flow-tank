@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { Timer, ListTodo, Calendar, BarChart3, Settings } from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "ホーム", icon: Timer },
-  { href: "/todos", label: "ToDo", icon: ListTodo },
-  { href: "/calendar", label: "カレンダー", icon: Calendar },
-  { href: "/stats", label: "統計", icon: BarChart3 },
-  { href: "/settings", label: "設定", icon: Settings },
+  { href: "/", label: "ホーム", icon: Timer, pro: false },
+  { href: "/todos", label: "ToDo", icon: ListTodo, pro: true },
+  { href: "/calendar", label: "カレンダー", icon: Calendar, pro: true },
+  { href: "/stats", label: "統計", icon: BarChart3, pro: true },
+  { href: "/settings", label: "設定", icon: Settings, pro: true },
 ];
 
 export default function Sidebar() {
@@ -22,7 +22,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon, pro }) => {
           const isActive = pathname === href;
           return (
             <Link
@@ -36,6 +36,11 @@ export default function Sidebar() {
             >
               <Icon size={20} />
               <span>{label}</span>
+              {pro && (
+                <span className="ml-auto text-xs bg-muted-blue/20 text-muted-blue rounded px-1">
+                  PRO
+                </span>
+              )}
             </Link>
           );
         })}

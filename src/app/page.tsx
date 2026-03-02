@@ -67,6 +67,10 @@ export default function Home() {
           onSkip={skip}
         />
 
+        {/* 未ログイン CTA */}
+        <p className="mt-4 text-xs text-warm-gray">
+          ログインすると記録が保存されます
+        </p>
       </div>
     </AppLayout>
   );

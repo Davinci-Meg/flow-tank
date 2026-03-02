@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTimerStore } from "@/stores/timer-store";
 import Button from "@/components/ui/Button";
 import AppLayout from "@/components/layout/AppLayout";
+import AuthGuard from "@/components/auth/AuthGuard";
 
 export default function SettingsPage() {
   const {
@@ -39,6 +40,7 @@ export default function SettingsPage() {
   };
 
   return (
+    <AuthGuard>
     <AppLayout>
       <div className="max-w-xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-heading mb-6">設定</h1>
@@ -145,5 +147,6 @@ export default function SettingsPage() {
         </div>
       </div>
     </AppLayout>
+    </AuthGuard>
   );
 }
