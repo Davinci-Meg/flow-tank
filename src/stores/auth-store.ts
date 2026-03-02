@@ -6,7 +6,6 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  GithubAuthProvider,
   User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -15,41 +14,49 @@ interface AuthState {
   user: User | null;
   loading: boolean;
   initialized: boolean;
+  error: string | null;
 }
 
 interface AuthActions {
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<boolean>;
+  signUpWithEmail: (email: string, password: string) => Promise<boolean>;
   signInWithGoogle: () => Promise<void>;
-  signInWithGithub: () => Promise<void>;
   signOut: () => Promise<void>;
   initialize: () => void;
+  clearError: () => void;
 }
 
 export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   user: null,
   loading: true,
   initialized: false,
+  error: null,
 
   signInWithEmail: async (email, password) => {
-    if (!auth) { set({ loading: false }); return; }
+    if (!auth) { set({ loading: false, error: "Firebase未設定" }); return false; }
     try {
-      set({ loading: true });
+      set({ loading: true, error: null });
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.error("サインインエラー:", err);
+      return true;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "サインインに失敗しました";
+      set({ error: message });
+      return false;
     } finally {
       set({ loading: false });
     }
   },
 
   signUpWithEmail: async (email, password) => {
-    if (!auth) { set({ loading: false }); return; }
+    if (!auth) { set({ loading: false, error: "Firebase未設定" }); return false; }
     try {
-      set({ loading: true });
+      set({ loading: true, error: null });
       await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.error("サインアップエラー:", err);
+      return true;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "サインアップに失敗しました";
+      set({ error: message });
+      return false;
     } finally {
       set({ loading: false });
     }
@@ -58,18 +65,11 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   signInWithGoogle: async () => {
     if (!auth) return;
     try {
+      set({ error: null });
       await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (err) {
-      console.error("Google認証エラー:", err);
-    }
-  },
-
-  signInWithGithub: async () => {
-    if (!auth) return;
-    try {
-      await signInWithPopup(auth, new GithubAuthProvider());
-    } catch (err) {
-      console.error("GitHub認証エラー:", err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Google認証に失敗しました";
+      set({ error: message });
     }
   },
 
@@ -77,7 +77,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
     if (!auth) return;
     try {
       await firebaseSignOut(auth);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("サインアウトエラー:", err);
     }
   },
@@ -95,4 +95,6 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
       set({ user, loading: false });
     });
   },
+
+  clearError: () => set({ error: null }),
 }));

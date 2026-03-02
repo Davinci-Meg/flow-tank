@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Timer, ListTodo, Calendar, BarChart3, Settings } from "lucide-react";
+import { Timer, ListTodo, Calendar, BarChart3, UserCircle } from "lucide-react";
 
 const tabItems = [
   { href: "/", label: "ホーム", icon: Timer },
   { href: "/todos", label: "ToDo", icon: ListTodo },
   { href: "/calendar", label: "カレンダー", icon: Calendar },
   { href: "/stats", label: "統計", icon: BarChart3 },
-  { href: "/settings", label: "設定", icon: Settings },
+  { href: "/mypage", label: "マイページ", icon: UserCircle },
 ];
 
 export default function BottomTabs() {

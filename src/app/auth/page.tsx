@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import Button from "@/components/ui/Button";
@@ -11,8 +11,28 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, loading } = useAuthStore();
+  const {
+    signInWithEmail,
+    signUpWithEmail,
+    signInWithGoogle,
+    loading,
+    error,
+    clearError,
+    user,
+    initialize,
+  } = useAuthStore();
   const router = useRouter();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  // ログイン済みならホームへ
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +41,6 @@ export default function AuthPage() {
     } else {
       await signUpWithEmail(email, password);
     }
-    router.push("/");
   };
 
   return (
@@ -31,10 +50,20 @@ export default function AuthPage() {
           Flow Tank
         </h1>
 
+        {/* エラー表示 */}
+        {error && (
+          <div
+            className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600 cursor-pointer"
+            onClick={clearError}
+          >
+            {error}
+          </div>
+        )}
+
         {/* タブ切替 */}
         <div className="flex mb-6 rounded-lg bg-off-white p-1">
           <button
-            onClick={() => setMode("login")}
+            onClick={() => { setMode("login"); clearError(); }}
             className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
               mode === "login"
                 ? "bg-muted-blue text-white"
@@ -44,7 +73,7 @@ export default function AuthPage() {
             ログイン
           </button>
           <button
-            onClick={() => setMode("signup")}
+            onClick={() => { setMode("signup"); clearError(); }}
             className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
               mode === "signup"
                 ? "bg-muted-blue text-white"
