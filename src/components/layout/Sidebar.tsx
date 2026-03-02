@@ -6,12 +6,12 @@ import { Timer, ListTodo, Calendar, BarChart3, Settings, UserCircle, LogOut } fr
 import { useAuthStore } from "@/stores/auth-store";
 
 const navItems = [
-  { href: "/", label: "ホーム", icon: Timer, pro: false },
-  { href: "/todos", label: "ToDo", icon: ListTodo, pro: true },
-  { href: "/calendar", label: "カレンダー", icon: Calendar, pro: true },
-  { href: "/stats", label: "統計", icon: BarChart3, pro: true },
-  { href: "/settings", label: "設定", icon: Settings, pro: true },
-  { href: "/mypage", label: "マイページ", icon: UserCircle, pro: true },
+  { href: "/", label: "ホーム", icon: Timer },
+  { href: "/todos", label: "ToDo", icon: ListTodo },
+  { href: "/calendar", label: "カレンダー", icon: Calendar },
+  { href: "/stats", label: "統計", icon: BarChart3 },
+  { href: "/settings", label: "設定", icon: Settings },
+  { href: "/mypage", label: "マイページ", icon: UserCircle },
 ];
 
 export default function Sidebar() {
@@ -25,7 +25,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
-        {navItems.map(({ href, label, icon: Icon, pro }) => {
+        {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           return (
             <Link
@@ -39,11 +39,6 @@ export default function Sidebar() {
             >
               <Icon size={20} />
               <span>{label}</span>
-              {pro && (
-                <span className="ml-auto text-xs bg-muted-blue/20 text-muted-blue rounded px-1">
-                  PRO
-                </span>
-              )}
             </Link>
           );
         })}
