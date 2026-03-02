@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
@@ -21,6 +21,23 @@ export const metadata: Metadata = {
   title: "Flow Tank — 水がたまるポモドーロタイマー",
   description:
     "集中時間を水槽で可視化するポモドーロタイマー。作業に没頭するほど水がたまる。",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Flow Tank",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1B3A4B",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

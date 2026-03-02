@@ -98,4 +98,27 @@ export type Translations = {
     avatar: string;
     registeredAt: string;
   };
+  landing: {
+    heroTagline: string;
+    heroDescription: string;
+    ctaStart: string;
+    conceptTitle: string;
+    conceptStep1Title: string;
+    conceptStep1Desc: string;
+    conceptStep2Title: string;
+    conceptStep2Desc: string;
+    conceptStep3Title: string;
+    conceptStep3Desc: string;
+    featuresTitle: string;
+    feature1Title: string;
+    feature1Desc: string;
+    feature2Title: string;
+    feature2Desc: string;
+    feature3Title: string;
+    feature3Desc: string;
+    feature4Title: string;
+    feature4Desc: string;
+    ctaBottom: string;
+    footerCopy: string;
+  };
 };
