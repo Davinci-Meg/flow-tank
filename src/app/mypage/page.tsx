@@ -3,11 +3,13 @@
 import { useRouter } from "next/navigation";
 import { LogOut, Mail, Calendar } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTranslation } from "@/i18n";
 import AppLayout from "@/components/layout/AppLayout";
 import AuthGuard from "@/components/auth/AuthGuard";
 import Button from "@/components/ui/Button";
 
 export default function MyPage() {
+  const t = useTranslation();
   const { user, signOut } = useAuthStore();
   const router = useRouter();
 
@@ -24,7 +26,7 @@ export default function MyPage() {
     <AuthGuard>
       <AppLayout>
         <div className="max-w-md mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold text-heading mb-6">マイページ</h1>
+          <h1 className="text-2xl font-bold text-heading mb-6">{t.mypage.title}</h1>
 
           <div className="bg-surface rounded-xl p-6 space-y-6">
             {/* アバター */}
@@ -32,7 +34,7 @@ export default function MyPage() {
               {user?.photoURL ? (
                 <img
                   src={user.photoURL}
-                  alt="アバター"
+                  alt={t.mypage.avatar}
                   className="w-20 h-20 rounded-full object-cover"
                 />
               ) : (
@@ -57,7 +59,7 @@ export default function MyPage() {
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Calendar size={16} className="text-warm-gray shrink-0" />
-                <span className="text-dark-text">登録日: {createdAt}</span>
+                <span className="text-dark-text">{t.mypage.registeredAt}: {createdAt}</span>
               </div>
             </div>
 
@@ -68,7 +70,7 @@ export default function MyPage() {
               onClick={handleSignOut}
             >
               <LogOut size={16} />
-              ログアウト
+              {t.common.logout}
             </Button>
           </div>
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useTodoStore } from "@/stores/todo-store";
+import { useTranslation } from "@/i18n";
 import type { Priority } from "@/types/database";
 import TodoList from "@/components/todo/TodoList";
 import Button from "@/components/ui/Button";
@@ -10,6 +11,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import AuthGuard from "@/components/auth/AuthGuard";
 
 export default function TodosPage() {
+  const t = useTranslation();
   const { addTodo } = useTodoStore();
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
@@ -29,7 +31,7 @@ export default function TodosPage() {
     <AuthGuard>
     <AppLayout>
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-heading mb-6">ToDoリスト</h1>
+        <h1 className="text-2xl font-bold text-heading mb-6">{t.todos.title}</h1>
 
         <form
           onSubmit={handleSubmit}
@@ -40,7 +42,7 @@ export default function TodosPage() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="新しいToDoを入力..."
+              placeholder={t.todos.inputPlaceholder}
               className="flex-1 bg-off-white rounded-lg px-3 py-2 text-sm text-dark-text placeholder:text-warm-gray focus:outline-none focus:ring-2 focus:ring-muted-blue transition-all"
             />
             <Button type="submit" size="sm" disabled={!title.trim()}>
@@ -54,9 +56,9 @@ export default function TodosPage() {
               onChange={(e) => setPriority(e.target.value as Priority)}
               className="bg-off-white rounded-lg px-3 py-1.5 text-sm text-dark-text focus:outline-none focus:ring-2 focus:ring-muted-blue"
             >
-              <option value="high">高</option>
-              <option value="medium">中</option>
-              <option value="low">低</option>
+              <option value="high">{t.todos.priorityHigh}</option>
+              <option value="medium">{t.todos.priorityMedium}</option>
+              <option value="low">{t.todos.priorityLow}</option>
             </select>
 
             <input

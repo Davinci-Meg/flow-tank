@@ -23,8 +23,8 @@ import {
   isWithinInterval,
   subDays,
 } from "date-fns";
-import { ja } from "date-fns/locale";
 import { useSessionStore } from "@/stores/session-store";
+import { useTranslation, interpolate } from "@/i18n";
 
 const DONUT_COLORS = [
   "#7AACBF",
@@ -37,6 +37,7 @@ const DONUT_COLORS = [
 ];
 
 export default function StatsCharts() {
+  const t = useTranslation();
   const { sessions, getWeeklyStats, getMonthlyStats, getLabelStats } =
     useSessionStore();
 
@@ -44,13 +45,14 @@ export default function StatsCharts() {
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
 
-  const weeklyData = getWeeklyStats();
+  const rawWeeklyData = getWeeklyStats();
+  const weeklyData = rawWeeklyData.map((d, i) => ({ ...d, day: t.stats.weekdays[i] }));
   const monthlyData = getMonthlyStats(year, month);
   const labelData = getLabelStats();
 
   const summary = useMemo(() => {
-    const weekStart = startOfWeek(now, { locale: ja });
-    const weekEnd = endOfWeek(now, { locale: ja });
+    const weekStart = startOfWeek(now);
+    const weekEnd = endOfWeek(now);
 
     const weekSessions = sessions.filter((s) =>
       isWithinInterval(new Date(s.started_at), {
@@ -104,10 +106,10 @@ export default function StatsCharts() {
   }, [sessions, now, year, month]);
 
   const summaryCards = [
-    { label: "今週の合計", value: `${summary.weekTotal}分` },
-    { label: "今月の合計", value: `${summary.monthTotal}分` },
-    { label: "連続日数", value: `${summary.streak}日` },
-    { label: "平均セッション/日", value: `${summary.avgSessions.toFixed(1)}回` },
+    { label: t.stats.weeklyTotal, value: `${summary.weekTotal}${t.common.minutes}` },
+    { label: t.stats.monthlyTotal, value: `${summary.monthTotal}${t.common.minutes}` },
+    { label: t.stats.streak, value: `${summary.streak}${t.common.days}` },
+    { label: t.stats.avgSessions, value: `${summary.avgSessions.toFixed(1)}${t.common.times}` },
   ];
 
   return (
@@ -127,7 +129,7 @@ export default function StatsCharts() {
 
       {/* 週間棒グラフ */}
       <div className="bg-surface rounded-xl p-6">
-        <h3 className="text-sm font-bold text-heading mb-4">今週の集中時間</h3>
+        <h3 className="text-sm font-bold text-heading mb-4">{t.stats.weeklyChart}</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={weeklyData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E0D8CF" />
@@ -141,10 +143,10 @@ export default function StatsCharts() {
               tick={{ fontSize: 12, fill: "#8C8279" }}
               axisLine={false}
               tickLine={false}
-              unit="分"
+              unit={t.common.minutes}
             />
             <Tooltip
-              formatter={(value) => [`${value}分`, "集中時間"]}
+              formatter={(value) => [`${value}${t.common.minutes}`, t.stats.focusTime]}
               contentStyle={{
                 borderRadius: "8px",
                 border: "none",
@@ -159,7 +161,7 @@ export default function StatsCharts() {
       {/* 月間折れ線グラフ */}
       <div className="bg-surface rounded-xl p-6">
         <h3 className="text-sm font-bold text-heading mb-4">
-          {month}月の集中時間推移
+          {interpolate(t.stats.monthlyChart, { month: String(month) })}
         </h3>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={monthlyData}>
@@ -175,10 +177,10 @@ export default function StatsCharts() {
               tick={{ fontSize: 12, fill: "#8C8279" }}
               axisLine={false}
               tickLine={false}
-              unit="分"
+              unit={t.common.minutes}
             />
             <Tooltip
-              formatter={(value) => [`${value}分`, "集中時間"]}
+              formatter={(value) => [`${value}${t.common.minutes}`, t.stats.focusTime]}
               contentStyle={{
                 borderRadius: "8px",
                 border: "none",
@@ -200,7 +202,7 @@ export default function StatsCharts() {
       {/* ラベル内訳ドーナツチャート */}
       <div className="bg-surface rounded-xl p-6">
         <h3 className="text-sm font-bold text-heading mb-4">
-          ラベル別内訳
+          {t.stats.labelBreakdown}
         </h3>
         <div className="flex flex-col md:flex-row items-center gap-6">
           <ResponsiveContainer width="100%" height={220}>
@@ -224,7 +226,7 @@ export default function StatsCharts() {
               </Pie>
               <Tooltip
                 formatter={(value, name) => [
-                  `${value}分`,
+                  `${value}${t.common.minutes}`,
                   name,
                 ]}
                 contentStyle={{
@@ -246,7 +248,7 @@ export default function StatsCharts() {
                   }}
                 />
                 <span className="text-xs text-warm-gray">
-                  {item.label} ({item.minutes}分)
+                  {item.label} ({item.minutes}{t.common.minutes})
                 </span>
               </div>
             ))}

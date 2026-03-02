@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslation } from "@/i18n";
 import { useTimerStore } from "@/stores/timer-store";
 import { useSessionStore } from "@/stores/session-store";
 import AppLayout from "@/components/layout/AppLayout";
@@ -27,6 +28,7 @@ export default function Home() {
     setOnSessionComplete,
   } = useTimerStore();
 
+  const t = useTranslation();
   const addSession = useSessionStore((s) => s.addSession);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -86,7 +88,7 @@ export default function Home() {
         </div>
 
         <p className="text-xs text-warm-gray/80">
-          ログインすると記録が保存されます
+          {t.common.loginPrompt}
         </p>
       </div>
     </AppLayout>

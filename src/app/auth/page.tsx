@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
+import { useTranslation } from "@/i18n";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -22,6 +23,7 @@ export default function AuthPage() {
     initialize,
   } = useAuthStore();
   const router = useRouter();
+  const t = useTranslation();
 
   useEffect(() => {
     initialize();
@@ -70,7 +72,7 @@ export default function AuthPage() {
                 : "text-warm-gray hover:text-heading"
             }`}
           >
-            ログイン
+            {t.auth.loginTab}
           </button>
           <button
             onClick={() => { setMode("signup"); clearError(); }}
@@ -80,14 +82,14 @@ export default function AuthPage() {
                 : "text-warm-gray hover:text-heading"
             }`}
           >
-            新規登録
+            {t.auth.signupTab}
           </button>
         </div>
 
         {/* メール/パスワードフォーム */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="メールアドレス"
+            label={t.auth.emailLabel}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -95,16 +97,16 @@ export default function AuthPage() {
             required
           />
           <Input
-            label="パスワード"
+            label={t.auth.passwordLabel}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="6文字以上"
+            placeholder={t.auth.passwordPlaceholder}
             required
             minLength={6}
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "処理中..." : mode === "login" ? "ログイン" : "新規登録"}
+            {loading ? t.common.loading : mode === "login" ? t.auth.loginButton : t.auth.signupButton}
           </Button>
         </form>
 
@@ -115,11 +117,11 @@ export default function AuthPage() {
               <div className="w-full border-t border-beige" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-surface px-2 text-warm-gray">または</span>
+              <span className="bg-surface px-2 text-warm-gray">{t.common.or}</span>
             </div>
           </div>
           <Button variant="secondary" className="w-full" onClick={signInWithGoogle}>
-            Googleでログイン
+            {t.auth.googleLogin}
           </Button>
         </div>
       </Card>

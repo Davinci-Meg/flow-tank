@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Play, Pause, RotateCcw, SkipForward } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { type TimerStatus } from "@/stores/timer-store";
 
 interface TimerControlsProps {
@@ -23,6 +24,7 @@ export default function TimerControls({
   onReset,
   onSkip,
 }: TimerControlsProps) {
+  const t = useTranslation();
   const canStart = label.trim().length > 0;
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -59,7 +61,7 @@ export default function TimerControls({
         <button
           onClick={onReset}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-beige text-warm-gray transition-colors hover:bg-beige/80"
-          aria-label="リセット"
+          aria-label={t.timer.reset}
         >
           <RotateCcw size={18} />
         </button>
@@ -75,7 +77,7 @@ export default function TimerControls({
               ? "bg-muted-blue text-white hover:opacity-90 hover:shadow-lg"
               : "bg-beige text-warm-gray cursor-not-allowed opacity-50"
           }`}
-          aria-label="スタート"
+          aria-label={t.timer.start}
         >
           <Play size={28} className="ml-1" />
         </button>
@@ -83,7 +85,7 @@ export default function TimerControls({
         <button
           onClick={onPause}
           className="flex h-16 w-16 items-center justify-center rounded-full bg-muted-blue text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg active:scale-95"
-          aria-label="一時停止"
+          aria-label={t.timer.pause}
         >
           <Pause size={28} />
         </button>
@@ -91,7 +93,7 @@ export default function TimerControls({
         <button
           onClick={onResume}
           className="flex h-16 w-16 items-center justify-center rounded-full bg-muted-blue text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg active:scale-95"
-          aria-label="再開"
+          aria-label={t.timer.resume}
         >
           <Play size={28} className="ml-1" />
         </button>
@@ -105,7 +107,7 @@ export default function TimerControls({
         <button
           onClick={onSkip}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-beige text-warm-gray transition-colors hover:bg-beige/80"
-          aria-label="スキップ"
+          aria-label={t.timer.skip}
         >
           <SkipForward size={18} />
         </button>

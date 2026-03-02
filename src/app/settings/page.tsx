@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useTimerStore } from "@/stores/timer-store";
+import { useTranslation } from "@/i18n";
 import Button from "@/components/ui/Button";
 import AppLayout from "@/components/layout/AppLayout";
 import AuthGuard from "@/components/auth/AuthGuard";
 
 export default function SettingsPage() {
+  const t = useTranslation();
   const {
     workDuration,
     breakDuration,
@@ -43,16 +45,16 @@ export default function SettingsPage() {
     <AuthGuard>
     <AppLayout>
       <div className="max-w-xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-heading mb-6">設定</h1>
+        <h1 className="text-2xl font-bold text-heading mb-6">{t.settings.title}</h1>
 
         <div className="bg-surface rounded-xl p-6 space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-heading">
-                作業時間
+                {t.settings.workDuration}
               </label>
               <span className="text-sm font-bold text-muted-blue">
-                {work}分
+                {work}{t.common.minutes}
               </span>
             </div>
             <input
@@ -65,18 +67,18 @@ export default function SettingsPage() {
               className="w-full accent-muted-blue"
             />
             <div className="flex justify-between text-xs text-warm-gray">
-              <span>5分</span>
-              <span>60分</span>
+              <span>5{t.common.minutes}</span>
+              <span>60{t.common.minutes}</span>
             </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-heading">
-                休憩時間
+                {t.settings.breakDuration}
               </label>
               <span className="text-sm font-bold text-muted-blue">
-                {shortBreak}分
+                {shortBreak}{t.common.minutes}
               </span>
             </div>
             <input
@@ -89,18 +91,18 @@ export default function SettingsPage() {
               className="w-full accent-muted-blue"
             />
             <div className="flex justify-between text-xs text-warm-gray">
-              <span>1分</span>
-              <span>30分</span>
+              <span>1{t.common.minutes}</span>
+              <span>30{t.common.minutes}</span>
             </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-heading">
-                長休憩時間
+                {t.settings.longBreakDuration}
               </label>
               <span className="text-sm font-bold text-muted-blue">
-                {longBreak}分
+                {longBreak}{t.common.minutes}
               </span>
             </div>
             <input
@@ -113,18 +115,18 @@ export default function SettingsPage() {
               className="w-full accent-muted-blue"
             />
             <div className="flex justify-between text-xs text-warm-gray">
-              <span>5分</span>
-              <span>60分</span>
+              <span>5{t.common.minutes}</span>
+              <span>60{t.common.minutes}</span>
             </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-heading">
-                セッション数
+                {t.settings.sessionCount}
               </label>
               <span className="text-sm font-bold text-muted-blue">
-                {sessionsCount}回
+                {sessionsCount}{t.common.times}
               </span>
             </div>
             <input
@@ -142,7 +144,7 @@ export default function SettingsPage() {
           </div>
 
           <Button onClick={handleSave} className="w-full">
-            {saved ? "保存しました" : "設定を保存"}
+            {saved ? t.settings.saved : t.settings.save}
           </Button>
         </div>
       </div>

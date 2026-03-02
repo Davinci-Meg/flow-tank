@@ -14,14 +14,13 @@ import {
   isSameMonth,
   isToday,
 } from "date-fns";
-import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Droplets } from "lucide-react";
 import { useSessionStore } from "@/stores/session-store";
+import { useTranslation, interpolate } from "@/i18n";
 import Modal from "@/components/ui/Modal";
 
-const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
-
 export default function CalendarView() {
+  const t = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const { sessions, getSessionsByDate } = useSessionStore();
@@ -29,8 +28,8 @@ export default function CalendarView() {
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
-    const calStart = startOfWeek(monthStart, { locale: ja });
-    const calEnd = endOfWeek(monthEnd, { locale: ja });
+    const calStart = startOfWeek(monthStart);
+    const calEnd = endOfWeek(monthEnd);
     return eachDayOfInterval({ start: calStart, end: calEnd });
   }, [currentMonth]);
 
@@ -62,7 +61,7 @@ export default function CalendarView() {
           <ChevronLeft size={20} />
         </button>
         <h2 className="text-lg font-bold text-heading">
-          {format(currentMonth, "yyyy年M月", { locale: ja })}
+          {format(currentMonth, t.calendar.yearMonthFormat)}
         </h2>
         <button
           onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
@@ -74,7 +73,7 @@ export default function CalendarView() {
 
       {/* 曜日ヘッダー */}
       <div className="grid grid-cols-7 gap-1">
-        {WEEKDAYS.map((d) => (
+        {t.calendar.weekdays.map((d) => (
           <div
             key={d}
             className="text-center text-xs font-medium text-warm-gray py-2"
@@ -136,7 +135,7 @@ export default function CalendarView() {
                     style={{ opacity: sessionOpacity }}
                   />
                   <span className="text-[10px] text-warm-gray">
-                    {totalMinutes}分
+                    {totalMinutes}{t.common.minutes}
                   </span>
                 </>
               )}
@@ -149,11 +148,11 @@ export default function CalendarView() {
       <Modal
         isOpen={selectedDate !== null}
         onClose={() => setSelectedDate(null)}
-        title={selectedDate ? format(new Date(selectedDate), "M月d日のセッション", { locale: ja }) : ""}
+        title={selectedDate ? interpolate(t.calendar.sessionTitle, { date: format(new Date(selectedDate), t.calendar.dateFormat) }) : ""}
       >
         {selectedSessions.length === 0 ? (
           <p className="text-warm-gray text-sm py-4 text-center">
-            この日のセッションはありません。
+            {t.calendar.noSessions}
           </p>
         ) : (
           <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -164,14 +163,14 @@ export default function CalendarView() {
               >
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-dark-text">
-                    {session.label || "未分類"}
+                    {session.label || t.common.uncategorized}
                   </span>
                   <span className="text-xs text-warm-gray">
                     {format(new Date(session.started_at), "HH:mm")}
                   </span>
                 </div>
                 <span className="text-sm font-medium text-muted-blue">
-                  {session.duration_minutes}分
+                  {session.duration_minutes}{t.common.minutes}
                 </span>
               </div>
             ))}

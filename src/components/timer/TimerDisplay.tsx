@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/i18n";
 import { type TimerStatus } from "@/stores/timer-store";
 
 interface TimerDisplayProps {
@@ -15,38 +16,32 @@ function formatTime(seconds: number): string {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-function getStatusLabel(status: TimerStatus): string {
-  switch (status) {
-    case "running":
-      return "作業中";
-    case "paused":
-      return "一時停止";
-    case "break":
-      return "休憩中";
-    case "longBreak":
-      return "長い休憩中";
-    case "idle":
-    default:
-      return "スタート待ち";
-  }
-}
-
 export default function TimerDisplay({
   timeRemaining,
   currentSession,
   totalSessions,
   status,
 }: TimerDisplayProps) {
+  const t = useTranslation();
+
+  const statusLabels: Record<TimerStatus, string> = {
+    running: t.timer.running,
+    paused: t.timer.paused,
+    break: t.timer.break,
+    longBreak: t.timer.longBreak,
+    idle: t.timer.idle,
+  };
+
   return (
     <div className="flex flex-col items-center gap-2">
       <p className="text-sm text-warm-gray">
-        {getStatusLabel(status)}
+        {statusLabels[status]}
       </p>
       <time className="font-mono text-6xl font-light tracking-wider text-deep-navy tabular-nums">
         {formatTime(timeRemaining)}
       </time>
       <p className="text-sm text-warm-gray">
-        セッション {currentSession}/{totalSessions}
+        {`${t.timer.session} ${currentSession}/${totalSessions}`}
       </p>
     </div>
   );

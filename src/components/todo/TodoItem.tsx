@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import { format, isPast, parseISO } from "date-fns";
 import type { Todo } from "@/types/database";
 import { useTodoStore } from "@/stores/todo-store";
+import { useTranslation } from "@/i18n";
 
 const priorityColors: Record<string, string> = {
   high: "bg-[#E53E3E]",
@@ -16,6 +17,7 @@ interface TodoItemProps {
 }
 
 export default function TodoItem({ todo }: TodoItemProps) {
+  const t = useTranslation();
   const { toggleTodo, deleteTodo } = useTodoStore();
   const isOverdue =
     todo.due_date && !todo.is_completed && isPast(parseISO(todo.due_date));
@@ -31,7 +33,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
 
       <span
         className={`w-2.5 h-2.5 rounded-full shrink-0 ${priorityColors[todo.priority]}`}
-        title={`優先度: ${todo.priority === "high" ? "高" : todo.priority === "medium" ? "中" : "低"}`}
+        title={`${t.todos.priority}: ${todo.priority === "high" ? t.todos.priorityHigh : todo.priority === "medium" ? t.todos.priorityMedium : t.todos.priorityLow}`}
       />
 
       <span
@@ -57,7 +59,7 @@ export default function TodoItem({ todo }: TodoItemProps) {
       <button
         onClick={() => deleteTodo(todo.id)}
         className="p-1.5 rounded-lg text-warm-gray hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
-        aria-label="削除"
+        aria-label={t.todos.delete}
       >
         <Trash2 size={16} />
       </button>

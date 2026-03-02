@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useTodoStore } from "@/stores/todo-store";
+import { useTranslation } from "@/i18n";
 import TodoItem from "./TodoItem";
 
 type Filter = "all" | "active" | "completed";
 
 export default function TodoList() {
+  const t = useTranslation();
   const { todos } = useTodoStore();
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -17,9 +19,9 @@ export default function TodoList() {
   });
 
   const filters: { key: Filter; label: string }[] = [
-    { key: "all", label: "全て" },
-    { key: "active", label: "未完了" },
-    { key: "completed", label: "完了済み" },
+    { key: "all", label: t.todos.filterAll },
+    { key: "active", label: t.todos.filterActive },
+    { key: "completed", label: t.todos.filterCompleted },
   ];
 
   return (
@@ -43,10 +45,10 @@ export default function TodoList() {
       {filtered.length === 0 ? (
         <p className="text-center text-warm-gray py-8 text-sm">
           {filter === "all"
-            ? "ToDoがありません。上のフォームから追加してください。"
+            ? t.todos.emptyAll
             : filter === "active"
-              ? "未完了のToDoはありません。"
-              : "完了済みのToDoはありません。"}
+              ? t.todos.emptyActive
+              : t.todos.emptyCompleted}
         </p>
       ) : (
         <div className="space-y-2">
