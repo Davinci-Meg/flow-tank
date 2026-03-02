@@ -110,18 +110,43 @@ body {
   animation: modal-in 0.2s ease-out;
 }
 
-/* LP: フェードイン + 上方向スライド */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* LP: Heroセクション用（ページ読み込み時のみ） */
+.lp-fade-in-up {
+  animation: lp-fade-in-up 0.7s ease-out both;
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out both;
+.lp-fade-in {
+  animation: lp-fade-in 0.5s ease-out both;
+}
+
+.lp-delay-1000 {
+  animation-delay: 1s;
+}
+
+@keyframes lp-fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lp-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* アクセシビリティ: モーション軽減設定を尊重 */
+@media (prefers-reduced-motion: reduce) {
+  .lp-fade-in-up,
+  .lp-fade-in,
+  .animate-wave-scroll,
+  .animate-bubble,
+  .animate-wave,
+  .animate-wave-slow {
+    animation: none !important;
+  }
+
+  /* スクロール連動のトランジションも無効化 */
+  [style*="transition-delay"] {
+    transition-delay: 0ms !important;
+    transition-duration: 0ms !important;
+  }
 }
