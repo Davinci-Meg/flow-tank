@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "@/i18n";
 import { useTimerStore } from "@/stores/timer-store";
 import { useSessionStore } from "@/stores/session-store";
+import { useAuthStore } from "@/stores/auth-store";
 import AppLayout from "@/components/layout/AppLayout";
+import AuthGuard from "@/components/auth/AuthGuard";
 import WaterTankBackground from "@/components/timer/WaterTankBackground";
 import TimerDisplay from "@/components/timer/TimerDisplay";
 import TimerControls from "@/components/timer/TimerControls";
@@ -29,6 +31,7 @@ export default function Home() {
   } = useTimerStore();
 
   const t = useTranslation();
+  const user = useAuthStore((s) => s.user);
   const addSession = useSessionStore((s) => s.addSession);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -36,7 +39,7 @@ export default function Home() {
   useEffect(() => {
     setOnSessionComplete((sessionLabel, durationMinutes, startedAt) => {
       addSession({
-        user_id: "local",
+        user_id: user?.uid ?? "local",
         label: sessionLabel || null,
         duration_minutes: durationMinutes,
         completed: true,
@@ -56,6 +59,7 @@ export default function Home() {
   }, [status, tick]);
 
   return (
+    <AuthGuard>
     <AppLayout fullBleed>
       {/* 画面全体の水槽背景 */}
       <WaterTankBackground progress={progress} status={status} />
@@ -87,10 +91,8 @@ export default function Home() {
           />
         </div>
 
-        <p className="text-xs text-warm-gray/80">
-          {t.common.loginPrompt}
-        </p>
       </div>
     </AppLayout>
+    </AuthGuard>
   );
 }
