@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useTimerStore } from "@/stores/timer-store";
 import { useSessionStore } from "@/stores/session-store";
 import AppLayout from "@/components/layout/AppLayout";
-import WaterTank from "@/components/timer/WaterTank";
+import WaterTankBackground from "@/components/timer/WaterTankBackground";
 import TimerDisplay from "@/components/timer/TimerDisplay";
 import TimerControls from "@/components/timer/TimerControls";
 import LabelInput from "@/components/timer/LabelInput";
@@ -54,34 +54,38 @@ export default function Home() {
   }, [status, tick]);
 
   return (
-    <AppLayout>
-      <div className="flex min-h-full flex-col items-center justify-center gap-8 py-8">
-        <LabelInput
-          value={label}
-          onChange={setLabel}
-          disabled={status !== "idle"}
-        />
+    <AppLayout fullBleed>
+      {/* 画面全体の水槽背景 */}
+      <WaterTankBackground progress={progress} status={status} />
 
-        <WaterTank progress={progress} status={status} />
+      {/* タイマーUI（水槽の上に浮かぶフロストガラスカード） */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-8">
+        <div className="flex flex-col items-center gap-8 rounded-2xl bg-white/60 backdrop-blur-md px-8 py-10 shadow-lg max-w-sm w-full">
+          <LabelInput
+            value={label}
+            onChange={setLabel}
+            disabled={status !== "idle"}
+          />
 
-        <TimerDisplay
-          timeRemaining={timeRemaining}
-          currentSession={currentSession}
-          totalSessions={totalSessions}
-          status={status}
-        />
+          <TimerDisplay
+            timeRemaining={timeRemaining}
+            currentSession={currentSession}
+            totalSessions={totalSessions}
+            status={status}
+          />
 
-        <TimerControls
-          status={status}
-          label={label}
-          onStart={start}
-          onPause={pause}
-          onResume={resume}
-          onReset={reset}
-          onSkip={skip}
-        />
+          <TimerControls
+            status={status}
+            label={label}
+            onStart={start}
+            onPause={pause}
+            onResume={resume}
+            onReset={reset}
+            onSkip={skip}
+          />
+        </div>
 
-        <p className="mt-4 text-xs text-warm-gray">
+        <p className="text-xs text-warm-gray/80">
           ログインすると記録が保存されます
         </p>
       </div>

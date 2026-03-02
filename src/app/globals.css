@@ -52,6 +52,48 @@ body {
   animation: wave 4s ease-in-out infinite;
 }
 
+/* 全画面水槽: 波スクロールアニメーション */
+@keyframes wave-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-wave-scroll {
+  animation: wave-scroll 4s linear infinite;
+}
+
+/* 全画面水槽: 泡アニメーション */
+@keyframes bubble-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+.animate-bubble {
+  animation: bubble-rise 3s ease-in-out infinite;
+}
+
+/* ドロワーメニュー: スライドイン */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.25s ease-out;
+}
+
+/* フェードイン */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
 /* モーダルアニメーション */
 @keyframes modal-in {
   from {

@@ -1,20 +1,20 @@
 "use client";
 
-import Sidebar from "./Sidebar";
-import BottomTabs from "./BottomTabs";
+import HamburgerMenu from "./HamburgerMenu";
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  /** ホーム画面のように全画面を使うページではtrueにする */
+  fullBleed?: boolean;
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout({ children, fullBleed }: AppLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <main className="flex-1 p-6 pb-20 md:pb-6 overflow-auto">
+    <div className="min-h-screen bg-background">
+      <HamburgerMenu />
+      <main className={fullBleed ? "min-h-screen" : "min-h-screen pt-14"}>
         {children}
       </main>
-      <BottomTabs />
     </div>
   );
 }

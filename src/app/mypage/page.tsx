@@ -71,6 +71,7 @@ export default function MyPage() {
               ログアウト
             </Button>
           </div>
+
         </div>
       </AppLayout>
     </AuthGuard>
