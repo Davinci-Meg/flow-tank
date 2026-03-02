@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-off-white: #FAF8F5;
+  --color-beige: #F0EBE3;
+  --color-muted-blue: #7AACBF;
+  --color-deep-navy: #1B3A4B;
+  --color-warm-gray: #8C8279;
+  --color-dark-text: #2C2C2C;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: #FAF8F5;
+  --color-foreground: #2C2C2C;
+  --color-surface: #F0EBE3;
+  --color-accent: #7AACBF;
+  --color-heading: #1B3A4B;
+  --color-secondary: #8C8279;
+
+  --font-sans: "Inter", "Noto Sans JP", sans-serif;
+  --font-mono: "JetBrains Mono", "DM Mono", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+/* 水槽アニメーション用キーフレーム */
+@keyframes wave {
+  0% { d: path("M0,8 Q22.5,2 45,8 T90,8 T135,8 T180,8 L180,16 L0,16 Z"); }
+  50% { d: path("M0,8 Q22.5,14 45,8 T90,8 T135,8 T180,8 L180,16 L0,16 Z"); }
+  100% { d: path("M0,8 Q22.5,2 45,8 T90,8 T135,8 T180,8 L180,16 L0,16 Z"); }
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 0.6; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* 波アニメーションクラス */
+.animate-wave {
+  animation: wave 2s ease-in-out infinite;
+}
+
+.animate-wave-slow {
+  animation: wave 4s ease-in-out infinite;
+}
+
+/* モーダルアニメーション */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in 0.2s ease-out;
 }
