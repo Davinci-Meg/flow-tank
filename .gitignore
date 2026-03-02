@@ -43,3 +43,6 @@ next-env.d.ts
 # Claude Code
 CLAUDE.md
 tasks/
+
+# 内部ドキュメント
+flow-tank-spec.md
