@@ -11,7 +11,7 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithGithub, loading } = useAuthStore();
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle, loading } = useAuthStore();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,9 +91,6 @@ export default function AuthPage() {
           </div>
           <Button variant="secondary" className="w-full" onClick={signInWithGoogle}>
             Googleでログイン
-          </Button>
-          <Button variant="secondary" className="w-full" onClick={signInWithGithub}>
-            GitHubでログイン
           </Button>
         </div>
       </Card>
