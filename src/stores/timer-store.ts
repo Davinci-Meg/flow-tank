@@ -12,6 +12,7 @@ interface TimerState {
   longBreakDuration: number;
   label: string;
   progress: number;
+  sessionStartedAt: string | null;
 }
 
 interface TimerActions {
@@ -28,7 +29,11 @@ interface TimerActions {
     longBreakDuration?: number;
     totalSessions?: number;
   }) => void;
+  setOnSessionComplete: (cb: (label: string, durationMinutes: number, startedAt: string) => void) => void;
 }
+
+// セッション完了コールバック（ストア外に保持）
+let onSessionComplete: ((label: string, durationMinutes: number, startedAt: string) => void) | null = null;
 
 function calcProgress(
   status: TimerStatus,
@@ -69,6 +74,7 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
   longBreakDuration: 15,
   label: "",
   progress: 0,
+  sessionStartedAt: null,
 
   start: () => {
     const { workDuration } = get();
@@ -76,6 +82,7 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       status: "running",
       timeRemaining: workDuration * 60,
       progress: 0,
+      sessionStartedAt: new Date().toISOString(),
     });
   },
 
@@ -101,6 +108,7 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       currentSession: 1,
       progress: 0,
       label: "",
+      sessionStartedAt: null,
     });
   },
 
@@ -115,7 +123,6 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
     } = get();
 
     if (status === "running" || status === "paused") {
-      // 作業セッション完了 → 休憩へ遷移
       const isLastSession = currentSession >= totalSessions;
       if (isLastSession) {
         set({
@@ -131,7 +138,6 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
         });
       }
     } else if (status === "break" || status === "longBreak") {
-      // 休憩完了 → 次セッションへ
       const nextSession =
         status === "longBreak" ? 1 : currentSession + 1;
       set({
@@ -152,6 +158,8 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       workDuration,
       breakDuration,
       longBreakDuration,
+      label,
+      sessionStartedAt,
     } = get();
 
     if (status !== "running" && status !== "break" && status !== "longBreak") {
@@ -161,24 +169,29 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
     const newTimeRemaining = timeRemaining - 1;
 
     if (newTimeRemaining <= 0) {
-      // タイマー完了 → 自動遷移
       if (status === "running") {
+        // 作業セッション完了 → 記録
+        if (onSessionComplete && sessionStartedAt) {
+          onSessionComplete(label, workDuration, sessionStartedAt);
+        }
+
         const isLastSession = currentSession >= totalSessions;
         if (isLastSession) {
           set({
             status: "longBreak",
             timeRemaining: longBreakDuration * 60,
             progress: 0,
+            sessionStartedAt: null,
           });
         } else {
           set({
             status: "break",
             timeRemaining: breakDuration * 60,
             progress: 0,
+            sessionStartedAt: null,
           });
         }
       } else {
-        // 休憩完了 → idle（次セッション待ち）
         const nextSession =
           status === "longBreak" ? 1 : currentSession + 1;
         set({
@@ -215,8 +228,11 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       breakDuration: settings.breakDuration ?? get().breakDuration,
       longBreakDuration: settings.longBreakDuration ?? get().longBreakDuration,
       totalSessions: settings.totalSessions ?? get().totalSessions,
-      // idle状態の場合、timeRemainingも更新
       ...(status === "idle" ? { timeRemaining: newWorkDuration * 60 } : {}),
     });
+  },
+
+  setOnSessionComplete: (cb) => {
+    onSessionComplete = cb;
   },
 }));

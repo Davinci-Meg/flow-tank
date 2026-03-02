@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useTimerStore } from "@/stores/timer-store";
+import { useSessionStore } from "@/stores/session-store";
 import AppLayout from "@/components/layout/AppLayout";
 import WaterTank from "@/components/timer/WaterTank";
 import TimerDisplay from "@/components/timer/TimerDisplay";
@@ -23,9 +24,25 @@ export default function Home() {
     skip,
     tick,
     setLabel,
+    setOnSessionComplete,
   } = useTimerStore();
 
+  const addSession = useSessionStore((s) => s.addSession);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // セッション完了時の記録を接続
+  useEffect(() => {
+    setOnSessionComplete((sessionLabel, durationMinutes, startedAt) => {
+      addSession({
+        user_id: "local",
+        label: sessionLabel || null,
+        duration_minutes: durationMinutes,
+        completed: true,
+        started_at: startedAt,
+        completed_at: new Date().toISOString(),
+      });
+    });
+  }, [setOnSessionComplete, addSession]);
 
   useEffect(() => {
     if (status === "running" || status === "break" || status === "longBreak") {
@@ -39,17 +56,14 @@ export default function Home() {
   return (
     <AppLayout>
       <div className="flex min-h-full flex-col items-center justify-center gap-8 py-8">
-        {/* ラベル入力 */}
         <LabelInput
           value={label}
           onChange={setLabel}
           disabled={status !== "idle"}
         />
 
-        {/* 水槽 */}
         <WaterTank progress={progress} status={status} />
 
-        {/* タイマー表示 */}
         <TimerDisplay
           timeRemaining={timeRemaining}
           currentSession={currentSession}
@@ -57,7 +71,6 @@ export default function Home() {
           status={status}
         />
 
-        {/* 操作ボタン */}
         <TimerControls
           status={status}
           onStart={start}
@@ -67,7 +80,6 @@ export default function Home() {
           onSkip={skip}
         />
 
-        {/* 未ログイン CTA */}
         <p className="mt-4 text-xs text-warm-gray">
           ログインすると記録が保存されます
         </p>
