@@ -13,6 +13,10 @@ interface TimerState {
   label: string;
   progress: number;
   sessionStartedAt: string | null;
+  // バックグラウンド動作用タイムスタンプ
+  _phaseStartedAt: number | null;
+  _pausedAt: number | null;
+  _totalPausedMs: number;
 }
 
 interface TimerActions {
@@ -75,6 +79,9 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
   label: "",
   progress: 0,
   sessionStartedAt: null,
+  _phaseStartedAt: null,
+  _pausedAt: null,
+  _totalPausedMs: 0,
 
   start: () => {
     const { workDuration } = get();
@@ -83,20 +90,27 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       timeRemaining: workDuration * 60,
       progress: 0,
       sessionStartedAt: new Date().toISOString(),
+      _phaseStartedAt: Date.now(),
+      _pausedAt: null,
+      _totalPausedMs: 0,
     });
   },
 
   pause: () => {
     const { status } = get();
     if (status === "running") {
-      set({ status: "paused" });
+      set({ status: "paused", _pausedAt: Date.now() });
     }
   },
 
   resume: () => {
-    const { status } = get();
-    if (status === "paused") {
-      set({ status: "running" });
+    const { status, _pausedAt, _totalPausedMs } = get();
+    if (status === "paused" && _pausedAt !== null) {
+      set({
+        status: "running",
+        _totalPausedMs: _totalPausedMs + (Date.now() - _pausedAt),
+        _pausedAt: null,
+      });
     }
   },
 
@@ -109,6 +123,9 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       progress: 0,
       label: "",
       sessionStartedAt: null,
+      _phaseStartedAt: null,
+      _pausedAt: null,
+      _totalPausedMs: 0,
     });
   },
 
@@ -129,12 +146,18 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
           status: "longBreak",
           timeRemaining: longBreakDuration * 60,
           progress: 0,
+          _phaseStartedAt: Date.now(),
+          _pausedAt: null,
+          _totalPausedMs: 0,
         });
       } else {
         set({
           status: "break",
           timeRemaining: breakDuration * 60,
           progress: 0,
+          _phaseStartedAt: Date.now(),
+          _pausedAt: null,
+          _totalPausedMs: 0,
         });
       }
     } else if (status === "break" || status === "longBreak") {
@@ -145,6 +168,9 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
         timeRemaining: workDuration * 60,
         currentSession: nextSession,
         progress: 0,
+        _phaseStartedAt: null,
+        _pausedAt: null,
+        _totalPausedMs: 0,
       });
     }
   },
@@ -152,7 +178,6 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
   tick: () => {
     const {
       status,
-      timeRemaining,
       currentSession,
       totalSessions,
       workDuration,
@@ -160,13 +185,20 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
       longBreakDuration,
       label,
       sessionStartedAt,
+      _phaseStartedAt,
+      _totalPausedMs,
     } = get();
 
     if (status !== "running" && status !== "break" && status !== "longBreak") {
       return;
     }
 
-    const newTimeRemaining = timeRemaining - 1;
+    if (_phaseStartedAt === null) return;
+
+    // 現フェーズの総時間(ms)
+    const phaseDurationMs = getTotalTime(status, workDuration, breakDuration, longBreakDuration) * 1000;
+    const elapsedMs = Date.now() - _phaseStartedAt - _totalPausedMs;
+    const newTimeRemaining = Math.max(0, Math.ceil((phaseDurationMs - elapsedMs) / 1000));
 
     if (newTimeRemaining <= 0) {
       if (status === "running") {
@@ -182,6 +214,9 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
             timeRemaining: longBreakDuration * 60,
             progress: 0,
             sessionStartedAt: null,
+            _phaseStartedAt: Date.now(),
+            _pausedAt: null,
+            _totalPausedMs: 0,
           });
         } else {
           set({
@@ -189,6 +224,9 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
             timeRemaining: breakDuration * 60,
             progress: 0,
             sessionStartedAt: null,
+            _phaseStartedAt: Date.now(),
+            _pausedAt: null,
+            _totalPausedMs: 0,
           });
         }
       } else {
@@ -199,18 +237,16 @@ export const useTimerStore = create<TimerState & TimerActions>((set, get) => ({
           timeRemaining: workDuration * 60,
           currentSession: nextSession,
           progress: 0,
+          _phaseStartedAt: null,
+          _pausedAt: null,
+          _totalPausedMs: 0,
         });
       }
     } else {
-      const totalTime = getTotalTime(
-        status,
-        workDuration,
-        breakDuration,
-        longBreakDuration
-      );
+      const progress = Math.min(1, elapsedMs / phaseDurationMs);
       set({
         timeRemaining: newTimeRemaining,
-        progress: calcProgress(status, newTimeRemaining, totalTime),
+        progress,
       });
     }
   },

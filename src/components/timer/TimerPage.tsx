@@ -55,6 +55,17 @@ export default function TimerPage() {
     };
   }, [status, tick]);
 
+  // タブ復帰時に即座にtickして表示を更新
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        tick();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [tick]);
+
   return (
     <AppLayout fullBleed>
       {/* 画面全体の水槽背景 */}
