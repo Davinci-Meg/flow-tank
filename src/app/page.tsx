@@ -7,9 +7,17 @@ import TimerPage from "@/components/timer/TimerPage";
 export default function Home() {
   const { user, initialized } = useAuthStore();
 
-  // 認証初期化前 → LPを即表示（スピナーで待たせない）
-  // 初期化後にuserが確定したら、ログイン済みならタイマーに切り替わる
-  if (!initialized || !user) {
+  // 初期化中はローディング表示（LP フラッシュ防止）
+  if (!initialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-off-white">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-blue border-t-transparent" />
+      </div>
+    );
+  }
+
+  // 未ログイン → LP、ログイン済み → タイマー
+  if (!user) {
     return <LandingPage />;
   }
 

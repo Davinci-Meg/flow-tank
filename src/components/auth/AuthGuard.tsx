@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter} from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 
 interface AuthGuardProps {
@@ -9,12 +9,8 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-  const { user, loading, initialized, initialize } = useAuthStore();
+  const { user, loading, initialized } = useAuthStore();
   const router = useRouter();
-
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
 
   useEffect(() => {
     if (initialized && !loading && !user) {
@@ -31,7 +27,11 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!user) {
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-blue border-t-transparent" />
+      </div>
+    );
   }
 
   return <>{children}</>;

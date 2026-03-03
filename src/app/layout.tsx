@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Noto_Sans_JP } from "next/font/google";
+import AuthProvider from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -53,7 +54,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} ${notoSansJP.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -20,14 +20,9 @@ export default function AuthPage() {
     error,
     clearError,
     user,
-    initialize,
   } = useAuthStore();
   const router = useRouter();
   const t = useTranslation();
-
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
 
   // ログイン済みならホームへ
   useEffect(() => {
@@ -38,10 +33,14 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let success = false;
     if (mode === "login") {
-      await signInWithEmail(email, password);
+      success = await signInWithEmail(email, password);
     } else {
-      await signUpWithEmail(email, password);
+      success = await signUpWithEmail(email, password);
+    }
+    if (success) {
+      router.push("/");
     }
   };
 
@@ -120,7 +119,7 @@ export default function AuthPage() {
               <span className="bg-surface px-2 text-warm-gray">{t.common.or}</span>
             </div>
           </div>
-          <Button variant="secondary" className="w-full" onClick={signInWithGoogle}>
+          <Button variant="secondary" className="w-full" onClick={signInWithGoogle} disabled={loading}>
             {t.auth.googleLogin}
           </Button>
         </div>

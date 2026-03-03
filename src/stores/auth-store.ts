@@ -63,13 +63,15 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
   },
 
   signInWithGoogle: async () => {
-    if (!auth) return;
+    if (!auth) { set({ error: "Firebase未設定" }); return; }
     try {
-      set({ error: null });
+      set({ loading: true, error: null });
       await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Google認証に失敗しました";
       set({ error: message });
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -77,8 +79,13 @@ export const useAuthStore = create<AuthState & AuthActions>((set, get) => ({
     if (!auth) return;
     try {
       await firebaseSignOut(auth);
+      localStorage.removeItem("flow-tank-sessions");
+      localStorage.removeItem("flow-tank-todos");
+      set({ user: null });
     } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "サインアウトに失敗しました";
       console.error("サインアウトエラー:", err);
+      set({ error: message });
     }
   },
 
